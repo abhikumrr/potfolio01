@@ -1,0 +1,15 @@
+
+Name	Tarun
+Age	23
+Height	5'9" (175 cm)
+Location	Jaipur, India
+Nationality	Indian
+Eye Color	Dark Brown
+Hair Color	Black
+Shoe Size	UK 10 / EU 44
+Chest	39 in
+Waist	31 in
+Hips	37 in
+Experience	3 Years
+Agency	Independent
+Specialties	Editorial, Runway, Campaigns
