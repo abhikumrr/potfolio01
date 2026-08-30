@@ -13,7 +13,7 @@ export default function ScrollyCanvas({ framePaths }: ScrollyCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   const [loaded, setLoaded] = useState(false);
-  const [progress, setProgress] = useState(0);
+
   
   const prefersReducedMotion = useReducedMotion();
   const imagesRef = useRef<HTMLImageElement[]>([]);
@@ -29,41 +29,53 @@ export default function ScrollyCanvas({ framePaths }: ScrollyCanvasProps) {
   useEffect(() => {
     if (frameCount === 0) return;
 
-    let loadedCount = 0;
     const images: HTMLImageElement[] = [];
-    
-    // Preload images
-    Promise.all(framePaths.map((path, i) => {
-      return new Promise<void>((resolve, reject) => {
+    imagesRef.current = images;
+
+    // Load first frame immediately to show content ASAP
+    const firstImg = new Image();
+    firstImg.src = framePaths[0];
+    firstImg.onload = () => {
+      firstImg.decode().then(() => {
+        images[0] = firstImg;
+        setLoaded(true);
+        drawFrame(0);
+        
+        // Asynchronously load the rest of the frames without blocking
+        loadRemainingFrames(images);
+      }).catch((e) => {
+        console.warn(`Failed to decode first image`, e);
+        images[0] = firstImg;
+        setLoaded(true);
+        drawFrame(0);
+        loadRemainingFrames(images);
+      });
+    };
+    firstImg.onerror = () => {
+      console.warn(`Failed to load first image`);
+      setLoaded(true);
+      loadRemainingFrames(images);
+    };
+
+    const loadRemainingFrames = (imgs: HTMLImageElement[]) => {
+      for (let i = 1; i < framePaths.length; i++) {
         const img = new Image();
-        img.src = path;
+        img.src = framePaths[i];
         img.onload = () => {
-          // Decode image for better performance before marking as ready
           img.decode().then(() => {
-            loadedCount++;
-            setProgress(Math.round((loadedCount / frameCount) * 100));
-            images[i] = img;
-            resolve();
-          }).catch((e) => {
-            console.warn(`Failed to decode image ${path}`, e);
-            // Even if decode fails, we can still resolve to keep the app working
-            loadedCount++;
-            images[i] = img;
-            resolve();
+            imgs[i] = img;
+            // If the user scrolled to this frame while it was loading, draw it now
+            if (Math.floor(frameIndex.get()) === i) {
+              drawFrame(i);
+            }
+          }).catch(() => {
+            imgs[i] = img;
           });
         };
-        img.onerror = reject;
-      });
-    })).then(() => {
-      imagesRef.current = images;
-      setLoaded(true);
-      // Draw first frame once loaded
-      drawFrame(0);
-    }).catch((e) => {
-      console.error("Error loading sequence images", e);
-      setLoaded(true); // show fallback or just proceed
-    });
-  }, [framePaths, frameCount]);
+      }
+    };
+  }, [framePaths, frameCount, frameIndex]);
+
 
   const drawFrame = (index: number) => {
     if (!canvasRef.current || imagesRef.current.length === 0) return;
@@ -150,17 +162,6 @@ export default function ScrollyCanvas({ framePaths }: ScrollyCanvasProps) {
     <div ref={containerRef} className="relative h-[500vh] bg-[#121212]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         
-        {!loaded && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#121212]">
-            <div className="w-64 h-1 bg-white/20 rounded overflow-hidden">
-              <div 
-                className="h-full bg-white transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="text-white/50 mt-4 text-sm uppercase tracking-widest">{progress}%</p>
-          </div>
-        )}
 
         <canvas 
           ref={canvasRef} 

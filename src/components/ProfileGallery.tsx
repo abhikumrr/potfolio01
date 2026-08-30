@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 // Using some placeholder image paths since we don't have the real ones yet.
 const PROFILE_PICS = [
@@ -25,14 +26,15 @@ export default function ProfileGallery() {
               key={idx}
               className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-500 ease-out cursor-pointer shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]"
             >
-              {/* Replace with next/image later if desired. We use a placeholder background color for now */}
               <div className="absolute inset-0 bg-white/10 flex items-center justify-center text-white/30 text-sm">
                 Image {idx + 1}
               </div>
-              <img 
+              <Image 
                 src={pic} 
                 alt={`Profile ${idx + 1}`} 
-                className="absolute inset-0 w-full h-full object-cover transition-all duration-300 group-hover:scale-105" 
+                fill
+                sizes="(max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-all duration-300 group-hover:scale-105" 
               />
             </div>
           ))}

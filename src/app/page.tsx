@@ -14,17 +14,23 @@ export default function Home() {
         The canvas takes up the first 500vh of the page.
         The layout shift is prevented as it's fully self-contained. 
       */}
-      <ScrollyCanvas framePaths={framePaths} />
+      <div id="home">
+        <ScrollyCanvas framePaths={framePaths} />
+      </div>
       
       {/* 
         The biodata triggers as we scroll past the 500vh mark. 
       */}
-      <BiodataSection data={biodata} />
+      <div id="biodata">
+        <BiodataSection data={biodata} />
+      </div>
       
       {/* 
         Profile gallery and socials at the bottom. 
       */}
-      <ProfileGallery />
+      <div id="gallery">
+        <ProfileGallery />
+      </div>
     </main>
   );
 }

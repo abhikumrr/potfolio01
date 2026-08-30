@@ -31,14 +31,14 @@ export default function Overlay({ scrollYProgress }: OverlayProps) {
 
       <motion.div
         style={{ opacity: opacity2, y: y2 }}
-        className="absolute inset-0 flex items-center justify-start text-3xl md:text-5xl font-bold tracking-tight text-white px-8 md:px-24"
+        className="absolute inset-0 flex items-center justify-start text-3xl md:text-5xl font-bold tracking-tight text-white px-4 md:px-24"
       >
         I walk with confidence.
       </motion.div>
 
       <motion.div
         style={{ opacity: opacity3, y: y3 }}
-        className="absolute inset-0 flex items-center justify-end text-3xl md:text-5xl font-bold tracking-tight text-white px-8 md:px-24 text-right"
+        className="absolute inset-0 flex items-center justify-end text-3xl md:text-5xl font-bold tracking-tight text-white px-4 md:px-24 text-right"
       >
         Capturing attention.
       </motion.div>
